@@ -41,8 +41,12 @@ body {
     display: none;
 }
 
-.search-input-container {
+.search-container {
     padding: 8px;
+}
+
+.search-input-container {
+    margin-bottom: 8px;
 }
 
 .search-input {

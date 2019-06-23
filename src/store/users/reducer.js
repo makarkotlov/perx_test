@@ -6,6 +6,7 @@ const initialState = {
     total: 0,
     loading: false,
     error: false,
+    pageSize: 4
 }
 
 const usersHandler = {

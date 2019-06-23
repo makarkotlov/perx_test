@@ -1,7 +1,6 @@
 import React from 'react'
 import { Form, Button, Input } from 'antd'
-import { toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+import Notification from './Notification'
 import uuid from 'uuid'
 
 const UserForm = ({
@@ -17,12 +16,16 @@ const UserForm = ({
                 if (!err) {
                     formData.key = uuid()
                     addNewUser(formData)
-                        .then(() => {
+                        .then(success => {
+                            if (!success) {
+                                Notification.error('The user is NOT CREATED!')
+                                return
+                            }
                             _toggleModal()
                             _getData()
-                            toast.success('New User is Added!')
+                            Notification.success('The user is CREATED!')
                         })
-                        .catch(err => toast.error(err))
+                        .catch(err => Notification.error(err))
                 }
             })
         },

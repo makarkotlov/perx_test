@@ -1,7 +1,6 @@
 import React from 'react'
 import { Form, Button, Input } from 'antd'
-import { toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+import Notification from './Notification'
 
 const CustomForm = Form.create({
     mapPropsToFields(props) {
@@ -42,12 +41,16 @@ const CustomForm = Form.create({
                         ...formData,
                     }
                     updateUser(data)
-                        .then(() => {
+                        .then(success => {
+                            if (!success) {
+                                Notification.error('User is NOT UPDATED!')
+                                return
+                            }
                             _toggleModal()
                             _getData()
-                            toast.success('User is Updated!')
+                            Notification.success('User is UPDATED!')
                         })
-                        .catch(err => toast.error(err))
+                        .catch(err => Notification.error(err))
                 }
             })
         }

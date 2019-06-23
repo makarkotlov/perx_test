@@ -4,10 +4,11 @@ import TableComponent from '../components/TableComponent'
 
 import { deleteUser, fetchUsers, getTotal } from '../store/users/actions'
 
-const mapStateToProps = ({ users }) => ({
-    users: users.users,
-    total: users.total,
-    loading: users.loading,
+const mapStateToProps = ({ users: { users, total, loading, pageSize } }) => ({
+    users,
+    total,
+    pageSize,
+    loading,
 })
 
 const mapDispatchToProps = {

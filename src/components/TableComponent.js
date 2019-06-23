@@ -1,8 +1,10 @@
+// @flow
 import React, { useState, useEffect } from 'react'
-import { Table, Button, Divider, Modal, Popconfirm, Input, Icon } from 'antd'
+import { Table, Button, Divider, Modal, Popconfirm, Icon } from 'antd'
 import UserFormContainer from '../containers/UserFormContainer'
 import EditUserFormContainer from '../containers/EditUserFormContainer'
-import { toast } from 'react-toastify'
+import Search from './Search'
+import Notification from './Notification'
 
 const TableComponent = ({
     users,
@@ -10,51 +12,37 @@ const TableComponent = ({
     fetchUsers,
     getTotal,
     total,
+    pageSize,
     loading,
 }) => {
     const [visible, _setVisible] = useState(false),
         [showEdit, _setShowEdit] = useState(false),
         [submitBtnRef, _setSubmitBtnRef] = useState({}),
         [updateBtnRef, _setUpdateBtnRef] = useState({}),
-        [searchInputRef, _setSearchInputRef] = useState({}),
         [record, _setRecord] = useState({}),
+        [pageNumber, setPageNumber] = useState(1),
+        _handleSearch = (dataIndex, phrase) => {
+            const search = {
+                    name: dataIndex === 'name',
+                    phrase,
+                },
+                pageNum = 1
+            fetchUsers(pageNum, search)
+                .then(success => {
+                    if (!success)
+                        Notification.error(
+                            'An error occured while fetching the users'
+                        )
+                })
+                .catch(err => Notification.error(err))
+        },
         _getColumnSearchProps = dataIndex => ({
-            filterDropdown: ({
-                setSelectedKeys,
-                selectedKeys,
-                confirm,
-                clearFilters,
-            }) => (
-                <div className="search-input-container">
-                    <Input
-                        ref={node => _setSearchInputRef(node)}
-                        placeholder={`Search ${dataIndex}`}
-                        value={selectedKeys[0]}
-                        onChange={e =>
-                            setSelectedKeys(
-                                e.target.value ? [e.target.value] : []
-                            )
-                        }
-                        onPressEnter={() => confirm()}
-                        className="search-input"
-                    />
-                    <Button
-                        type="primary"
-                        onClick={() => confirm()}
-                        icon="search"
-                        size="small"
-                        className="search-input-confirm-btn"
-                    >
-                        Search
-                    </Button>
-                    <Button
-                        onClick={() => clearFilters()}
-                        size="small"
-                        className="search-input-reset-btn"
-                    >
-                        Reset
-                    </Button>
-                </div>
+            filterDropdown: () => (
+                <Search
+                    handleSearch={_handleSearch}
+                    getData={_getData}
+                    dataIndex={dataIndex}
+                />
             ),
             filterIcon: filtered => (
                 <Icon
@@ -62,16 +50,6 @@ const TableComponent = ({
                     style={{ color: filtered ? '#1890ff' : undefined }}
                 />
             ),
-            onFilter: (value, record) =>
-                record[dataIndex]
-                    .toString()
-                    .toLowerCase()
-                    .includes(value.toLowerCase()),
-            onFilterDropdownVisibleChange: visible => {
-                if (visible) {
-                    setTimeout(() => searchInputRef.select())
-                }
-            },
         }),
         columns = [
             {
@@ -117,16 +95,34 @@ const TableComponent = ({
         _handleUpdate = () => updateBtnRef.buttonNode.click(),
         _getData = () => {
             getTotal()
-                .then(() => fetchUsers())
-                .catch(err => toast.error(err))
+                .then(success => {
+                    if (!success) {
+                        Notification.error(
+                            'An error occured while fetching the users quantity'
+                        )
+                        return
+                    }
+                    fetchUsers(pageNumber)
+                })
+                .catch(err => Notification.error(err))
         },
         _deleteUser = record => {
             deleteUser(record.objectId)
-                .then(() => {
-                    toast.success('User was successfully Deleted!')
+                .then(success => {
+                    if (!success) {
+                        Notification.error(
+                            'An error occured while deleting the user'
+                        )
+                        return
+                    }
+                    Notification.success('User is DELETED!')
                     _getData()
                 })
-                .catch(err => toast.error(err))
+                .catch(err => Notification.error(err))
+        },
+        _handleChange = ({ current }) => {
+            setPageNumber(current)
+            fetchUsers(current)
         }
 
     useEffect(() => {
@@ -139,7 +135,8 @@ const TableComponent = ({
                 columns={columns}
                 dataSource={users}
                 loading={loading}
-                pagination={{ total, pageSize: 4 }}
+                pagination={{ total, pageSize }}
+                onChange={_handleChange}
             />
 
             <Button
