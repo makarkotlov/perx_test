@@ -1,23 +1,22 @@
+import { pick, path, compose } from 'ramda'
 import { connect } from 'react-redux'
 
 import TableComponent from '../components/TableComponent'
 
 import { deleteUser, fetchUsers, getTotal } from '../store/users/actions'
 
-const mapStateToProps = ({ users: { users, total, loading, pageSize } }) => ({
-    users,
-    total,
-    pageSize,
-    loading,
-})
+const mapStateToProps = compose(
+  pick(['users', 'total', 'pageSize', 'loading']),
+  path(['users'])
+)
 
 const mapDispatchToProps = {
-    deleteUser,
-    fetchUsers,
-    getTotal,
+  deleteUser,
+  fetchUsers,
+  getTotal,
 }
 
 export default connect(
-    mapStateToProps,
-    mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(TableComponent)

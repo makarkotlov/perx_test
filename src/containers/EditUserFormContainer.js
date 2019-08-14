@@ -1,18 +1,17 @@
+import { pick } from 'ramda'
 import { connect } from 'react-redux'
 
 import EditUserForm from '../components/EditUserForm'
 
 import { updateUser } from '../store/users/actions'
 
-const mapStateToProps = ({ users: { error } }) => ({
-    error,
-})
+const mapStateToProps = pick(['users'])
 
 const mapDispatchToProps = {
-    updateUser,
+  updateUser,
 }
 
 export default connect(
-    mapStateToProps,
-    mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(EditUserForm)
