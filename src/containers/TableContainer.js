@@ -1,4 +1,4 @@
-import { pick, path, compose } from 'ramda'
+import { pick, path, compose } from 'rambda'
 import { connect } from 'react-redux'
 
 import TableComponent from '../components/TableComponent'

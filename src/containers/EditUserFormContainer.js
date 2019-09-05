@@ -1,4 +1,4 @@
-import { pick } from 'ramda'
+import { pick } from 'rambda'
 import { connect } from 'react-redux'
 
 import EditUserForm from '../components/EditUserForm'

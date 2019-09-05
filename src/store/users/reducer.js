@@ -1,4 +1,4 @@
-import { propOr, identity } from 'ramda'
+import { propOr, identity } from 'rambda'
 import { map } from 'lodash'
 import cuid from 'cuid'
 import * as ActionTypes from './actionTypes'

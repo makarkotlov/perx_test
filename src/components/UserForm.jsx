@@ -29,6 +29,7 @@ const UserForm = ({
       }
     })
   }
+  const getSubmitBtnRef = () => ref => _getSubmitBtnRef(ref)
   const { getFieldDecorator } = form
   const formItemLayout = {
     labelCol: { span: 6 },
@@ -70,11 +71,7 @@ const UserForm = ({
         })(<Input.Password />)}
       </Form.Item>
 
-      <Button
-        htmlType="submit"
-        className="hidden"
-        ref={ref => _getSubmitBtnRef(ref)}
-      />
+      <Button htmlType="submit" className="hidden" ref={getSubmitBtnRef} />
     </Form>
   )
 }

@@ -20,7 +20,8 @@ const TableComponent = ({
   const [submitBtnRef, _setSubmitBtnRef] = useState({})
   const [updateBtnRef, _setUpdateBtnRef] = useState({})
   const [record, _setRecord] = useState({})
-  const [pageNumber, setPageNumber] = useState(1)
+  const [pageNumber, _setPageNumber] = useState(1)
+
   const _handleSearch = (dataIndex, phrase) => {
     const search = {
       name: dataIndex === 'name',
@@ -72,6 +73,16 @@ const TableComponent = ({
       })
       .catch(err => Notification.error(err))
   }
+  const handleEdit = () => record => {
+    _setRecord(record)
+    _setShowEdit(true)
+    _toggleModal()
+  }
+  const handleDelete = () => record => _deleteUser(record)
+  const handleAdd = () => {
+    _setShowEdit(false)
+    _toggleModal()
+  }
   const columns = [
     {
       title: 'Name',
@@ -87,19 +98,11 @@ const TableComponent = ({
       title: 'Actions',
       render: (text, record) => (
         <span>
-          <Button
-            onClick={() => {
-              _setRecord(record)
-              _setShowEdit(true)
-              _toggleModal()
-            }}
-          >
-            Edit
-          </Button>
+          <Button onClick={handleEdit(record)}>Edit</Button>
           <Divider type="vertical" />
           <Popconfirm
             title="Are you sure delete this user?"
-            onConfirm={() => _deleteUser(record)}
+            onConfirm={handleDelete(record)}
             okText="Yes"
             cancelText="No"
           >
@@ -114,7 +117,7 @@ const TableComponent = ({
   const _handleSubmit = () => submitBtnRef.buttonNode.click()
   const _handleUpdate = () => updateBtnRef.buttonNode.click()
   const _handleChange = ({ current }) => {
-    setPageNumber(current)
+    _setPageNumber(current)
     fetchUsers(current)
   }
 
@@ -132,13 +135,7 @@ const TableComponent = ({
         onChange={_handleChange}
       />
 
-      <Button
-        className="flexed-centered"
-        onClick={() => {
-          _setShowEdit(false)
-          _toggleModal()
-        }}
-      >
+      <Button className="flexed-centered" onClick={handleAdd}>
         Add New User
       </Button>
 
